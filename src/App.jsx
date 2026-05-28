@@ -269,14 +269,18 @@ function StatCard({ icon, label, value, color = "blue", sub }) {
     teal: "from-teal-500 to-teal-600",
   };
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center gap-4">
-      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors[color]} flex items-center justify-center text-white flex-shrink-0`}>
+    <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-slate-100 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 min-w-0">
+      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${colors[color]} flex items-center justify-center text-white flex-shrink-0`}>
         {icon}
       </div>
-      <div>
-        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{label}</p>
-        <p className="text-2xl font-bold text-slate-800 leading-tight">{value ?? "-"}</p>
-        {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
+      <div className="min-w-0">
+        <p className="text-[11px] sm:text-xs text-slate-500 font-medium uppercase tracking-wider leading-snug break-words">
+          {label}
+        </p>
+        <p className="text-xl sm:text-2xl font-bold text-slate-800 leading-tight break-words">
+          {value ?? "-"}
+        </p>
+        {sub && <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5 leading-snug break-words">{sub}</p>}
       </div>
     </div>
   );
@@ -965,22 +969,22 @@ export default function App() {
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-auto p-5 space-y-5">
+        <main className="flex-1 overflow-auto p-4 sm:p-5 space-y-5">
           {/* Page title + actions */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h1 className="text-xl font-extrabold text-slate-800">{activeNav}</h1>
               <p className="text-sm text-slate-400 mt-0.5">CleanStreak Waste Management </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {canCreateBin && (
-                <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-semibold hover:opacity-90 transition shadow-sm">
+                <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-semibold hover:opacity-90 transition shadow-sm w-full sm:w-auto">
                   <IconPlus className="h-4 w-4" />
                   Create Bin
                 </button>
               )}
               {canAssignBin && (
-                <button onClick={() => { setAssignBinId(null); setShowAssign(true); }} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold hover:opacity-90 transition shadow-sm">
+                <button onClick={() => { setAssignBinId(null); setShowAssign(true); }} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-green-500 text-white text-sm font-semibold hover:opacity-90 transition shadow-sm w-full sm:w-auto">
                   <IconUser className="h-4 w-4" />
                   Assign Bin
                 </button>
@@ -995,13 +999,13 @@ export default function App() {
           )}
 
           {/* Stats Row */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
-            <StatCard icon={<IconTrash className="h-6 w-6" />} label="Total Bins" value={stats.total} color="blue" />
-            <StatCard icon={<IconRecycle className="h-6 w-6" />} label="Recyclable" value={stats.recyclable} color="blue" />
-            <StatCard icon={<IconLeaf className="h-6 w-6" />} label="Perishable" value={stats.perishable} color="green" />
-            <StatCard icon={<IconAlert className="h-6 w-6" />} label="Full Bins" value={stats.full} color="red" sub="80%+ capacity" />
-            <StatCard icon={<IconTruck className="h-6 w-6" />} label="Pickup Req." value={stats.pickup} color="orange" sub="pending" />
-            <StatCard icon={<IconUsers className="h-6 w-6" />} label="Unassigned" value={stats.unassigned} color="gray" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+            <StatCard icon={<IconTrash className="h-5 w-5 sm:h-6 sm:w-6" />} label="Total Bins" value={stats.total} color="blue" />
+            <StatCard icon={<IconRecycle className="h-5 w-5 sm:h-6 sm:w-6" />} label="Recyclable" value={stats.recyclable} color="blue" />
+            <StatCard icon={<IconLeaf className="h-5 w-5 sm:h-6 sm:w-6" />} label="Perishable" value={stats.perishable} color="green" />
+            <StatCard icon={<IconAlert className="h-5 w-5 sm:h-6 sm:w-6" />} label="Full Bins" value={stats.full} color="red" sub="80%+ capacity" />
+            <StatCard icon={<IconTruck className="h-5 w-5 sm:h-6 sm:w-6" />} label="Pickup Req." value={stats.pickup} color="orange" sub="pending" />
+            <StatCard icon={<IconUsers className="h-5 w-5 sm:h-6 sm:w-6" />} label="Unassigned" value={stats.unassigned} color="gray" />
           </div>
 
           {/* Map + Side Panel */}
