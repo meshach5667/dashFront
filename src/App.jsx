@@ -482,6 +482,7 @@ function MapView({ bins, onBinClick, selectedBin, onAssign, onMarkPickedUp, canA
   const apiKey = import.meta.env.VITE_GOOGLE_MAP_API_KEY;
   const [status, setStatus] = useState(() => (apiKey ? "loading" : "error"));
   const [error, setError] = useState(() => (apiKey ? null : "Missing Google Maps API key."));
+  const defaultCenter = { lat: 9.0765, lng: 7.3986 };
 
   const binsWithCoords = bins.filter((bin) => Number.isFinite(bin.lat) && Number.isFinite(bin.lng));
   const missingCoords = bins.length - binsWithCoords.length;
@@ -494,7 +495,7 @@ function MapView({ bins, onBinClick, selectedBin, onAssign, onMarkPickedUp, canA
       .then((maps) => {
         if (cancelled || mapInstanceRef.current || !mapRef.current) return;
         mapInstanceRef.current = new maps.Map(mapRef.current, {
-          center: { lat: 9.0765, lng: 7.3986 },
+          center: defaultCenter,
           zoom: 7,
           mapTypeControl: false,
           streetViewControl: false,
@@ -550,8 +551,31 @@ function MapView({ bins, onBinClick, selectedBin, onAssign, onMarkPickedUp, canA
     }
   }, [binsWithCoords, selectedBin, status, onBinClick]);
 
+  useEffect(() => {
+    if (status !== "ready" || !mapInstanceRef.current || !window.google?.maps) return;
+    const map = mapInstanceRef.current;
+    const maps = window.google.maps;
+    const handleResize = () => {
+      maps.event.trigger(map, "resize");
+      if (!binsWithCoords.length) {
+        map.setCenter(defaultCenter);
+        map.setZoom(7);
+      }
+    };
+    const timeoutId = window.setTimeout(handleResize, 150);
+    let observer;
+    if (typeof ResizeObserver !== "undefined" && mapRef.current) {
+      observer = new ResizeObserver(handleResize);
+      observer.observe(mapRef.current);
+    }
+    return () => {
+      window.clearTimeout(timeoutId);
+      if (observer) observer.disconnect();
+    };
+  }, [status, binsWithCoords.length, defaultCenter]);
+
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+    <div className="relative w-full h-full min-h-[320px] sm:min-h-[360px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
       <div ref={mapRef} className="absolute inset-0" />
 
       {status === "loading" && (
@@ -1038,7 +1062,7 @@ export default function App() {
                   </button>
                 ))}
               </div>
-              <div className="flex-1 relative min-h-[320px]">
+              <div className="flex-1 relative h-[320px] sm:h-[360px] lg:h-full min-h-[320px] sm:min-h-[360px]">
                 <MapView
                   bins={filteredBins}
                   onBinClick={handleBinClick}
